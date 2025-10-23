@@ -5,8 +5,11 @@
     { "src": "public", "use": "@vercel/static" },
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "geojson", "use": "@vercel/static" },
+    { "src": "광주광역시", "use": "@vercel/static" },
+    { "src": "경관지구", "use": "@vercel/static" },
+    { "src": "경관지구관리구역", "use": "@vercel/static" },
     { "src": "전라남도", "use": "@vercel/static" },
-    { "src": "경관법규", "use": "@vercel/static" }
+    { "src": "전라북도", "use": "@vercel/static" }
   ],
   "routes": [
     { "source": "/api/(.*)", "destination": "server.js" },
