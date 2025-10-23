@@ -2,11 +2,14 @@
   "version": 2,
   "builds": [
     { "src": "server.js", "use": "@vercel/node" },
-    { "src": "public", "use": "@vercel/static" }
+    { "src": "public", "use": "@vercel/static" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "geojson", "use": "@vercel/static" },
+    { "src": "전라남도", "use": "@vercel/static" },
+    { "src": "경관법규", "use": "@vercel/static" }
   ],
   "routes": [
     { "source": "/api/(.*)", "destination": "server.js" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
-
