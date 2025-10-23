@@ -1004,7 +1004,45 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
 // =================================================================
 
 
-// === [수정] 414 오류를 해결하기 위해 '체크된' 레이어만 전송하도록 수정 ===
+// =================================================================
+// [원본] fetchParcelBoundary (Kakao Fallback용)
+// =================================================================
+async function fetchParcelBoundary(lat, lng) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/parcel?lat=${lat}&lng=${lng}`);
+        const data = await response.json();
+        
+        if (data.success && data.geometry) {
+            return data.geometry; // 경계 데이터 반환
+        } else { 
+            console.warn('⚠️ (Fallback) 필지 데이터 없음:', data.message); 
+            return null;
+        }
+    } catch (error) { 
+        console.error('❌ (Fallback) 필지 경계 가져오기 오류:', error); 
+        return null;
+    }
+}
+// =================================================================
+// ⬆️ fetchParcelBoundary 종료 ⬆️
+// =================================================================
+
+
+function drawCircles(lat, lng) {
+    currentCircles.forEach(circle => circle.setMap(null));
+    currentCircles = [];
+    const center = new kakao.maps.LatLng(lat, lng);
+    const radii = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
+    const colors = ['#ff6b6b', '#ffa726', '#ffeb3b', '#66bb6a', '#42a5f5', '#ab47bc'];
+    radii.forEach((radius, index) => {
+        if (radius <= currentRadius) {
+            const circle = new kakao.maps.Circle({ center: center, radius: radius * 1000, strokeWeight: 2.5, strokeColor: colors[index], strokeOpacity: 1.0, strokeStyle: 'dashed', fillColor: colors[index], fillOpacity: 0.05, zIndex: 0 });
+            circle.setMap(map);
+            currentCircles.push(circle);
+        }
+    });
+}
+
 async function analyzeLocation(lat, lng, address, detectedRegion) {
     try {
         // [수정 시작]
@@ -1030,19 +1068,16 @@ async function analyzeLocation(lat, lng, address, detectedRegion) {
                 file: file
             });
         });
-        // [수정 끝]
-
-        // fetch 요청 부분은 기존과 동일합니다.
-        // body의 layers: selectedLayers 부분에 위에서 만든 '체크된' 레이어 객체가 들어갑니다.
+        
         const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 lat, 
                 lng, 
-                layers: selectedLayers, // '체크된' 레이어만 전송
+                layers: selectedLayers, 
                 radius: currentRadius,
-                parcelGeometry: currentParcelGeometry 
+                parcelGeometry: currentParcelGeometry // (displaySearchResult에서 설정된 전역 변수 사용)
             })
         });
         
@@ -1056,8 +1091,8 @@ async function analyzeLocation(lat, lng, address, detectedRegion) {
             currentAddressInfo = { 
                 address: address, 
                 region: detectedRegion,
-                lat: lat, 
-                lng: lng  
+                lat: lat, // 분석에 실제 사용된 lat
+                lng: lng  // 분석에 실제 사용된 lng
             };
             
             const chatInput = document.getElementById('chatInput');
@@ -1081,13 +1116,13 @@ AI가 심의 대상을 판단할 수 있도록 아래 예시를 참고하여 <st
 `;
             addMessageToChat(welcomeMessage, 'ai');
 
+            // === [수정] 상세 결과 표시에 분석에 사용된 lat, lng 전달 ===
             await displayAnalysisResult(result.data, address, lat, lng, detectedRegion);
         }
     } catch (error) {
         console.error('분석 오류:', error);
     }
 }
-// === [수정] 끝 ===
 
 async function displayAnalysisResult(data, address, lat, lng, detectedRegion) {
     const detailsContent = document.getElementById('detailsContent');
@@ -1305,5 +1340,4 @@ function showRightPanelTab(tabName, forceOpen = false) {
 }
 
 window.onload = initMap;
-
 
