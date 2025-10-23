@@ -15,6 +15,7 @@ app.use(express.json());
 // .env 파일의 변수를 process.env로 로드합니다.
 require('dotenv').config();
 
+
 // === [수정] API 키를 process.env에서 읽어오기 ===
 const VWORLD_API_KEY = process.env.VWORLD_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -317,7 +318,8 @@ app.post('/api/search/address', async (req, res) => {
             type: 'PARCEL', // Jibun address
             size: 1,
             output: 'json',
-            key: VWORLD_API_KEY
+            key: VWORLD_API_KEY,
+            domain: 'https://su-landscapemap-v2.vercel.app',
         };
 
         const addressResponse = await axios.get(addressUrl, { params: addressParams, timeout: 5000 });
@@ -351,6 +353,7 @@ app.post('/api/search/address', async (req, res) => {
                     cql_filter: `pnu='${pnu}'`,
                     srsname: 'EPSG:4326',
                     output: 'application/json', key: VWORLD_API_KEY, 
+                    domain: 'https://su-landscapemap-v2.vercel.app',
                     // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
                     // domain: 'http://localhost:3000'
                 };
@@ -381,6 +384,7 @@ app.post('/api/search/address', async (req, res) => {
                 bbox: bbox, 
                 srsname: 'EPSG:4326',
                 output: 'application/json', key: VWORLD_API_KEY, 
+                domain: 'https://su-landscapemap-v2.vercel.app'
                 // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
                 // domain: 'http://localhost:3000'
             };
@@ -481,7 +485,8 @@ app.get('/api/parcel', async (req, res) => {
                 coords: `${longitude},${latitude}`,
                 type: 'PARCEL', 
                 output: 'json',
-                key: VWORLD_API_KEY
+                key: VWORLD_API_KEY,
+                domain: 'https://su-landscapemap-v2.vercel.app'
             };
             
             const addressResponse = await axios.get(addressUrl, { params: addressParams, timeout: 5000 });
@@ -506,6 +511,7 @@ app.get('/api/parcel', async (req, res) => {
                     cql_filter: `pnu='${pnu}'`, 
                     srsname: 'EPSG:4326',
                     output: 'application/json', key: VWORLD_API_KEY, 
+                    domain: 'https://su-landscapemap-v2.vercel.app',
                     // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
                     // domain: 'http://localhost:3000'
                 };
@@ -536,6 +542,7 @@ app.get('/api/parcel', async (req, res) => {
             bbox: bbox, 
             srsname: 'EPSG:4326',
             output: 'application/json', key: VWORLD_API_KEY, 
+            domain: 'https://su-landscapemap-v2.vercel.app',
             // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
             // domain: 'http://localhost:3000'
         };
@@ -833,9 +840,5 @@ app.post('/api/gemini/chat', async (req, res) => {
 // 로컬 테스트 및 Vercel 초기 실행을 위해 loadLawData를 호출합니다.
 loadLawData();
 module.exports = app;
-
-
-
-
 
 
