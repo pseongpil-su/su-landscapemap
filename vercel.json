@@ -1,19 +1,10 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "geojson/**", 
-          "law.json"
-        ]
-      }
-    }
+    { "src": "server.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "source": "/api/(.*)", "destination": "server.js" },
+    { "src": "/api/(.*)", "dest": "server.js" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
