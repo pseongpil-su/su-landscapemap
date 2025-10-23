@@ -13,8 +13,8 @@ app.use(express.static('public'));
 require('dotenv').config();
 
 // === [수정] API 키를 process.env에서 읽어오기 ===
-const VWORLD_API_KEY = process.env.VWORLD_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const VWORLD_API_KEY = gemini-v1.env.VWORLD_API_KEY;
+const GEMINI_API_KEY = vworld-api.env.GEMINI_API_KEY;
 
 const GEOJSON_DIR = path.join(process.cwd(), 'geojson');
 let lawData = null; 
@@ -830,6 +830,7 @@ app.post('/api/gemini/chat', async (req, res) => {
 // 로컬 테스트 및 Vercel 초기 실행을 위해 loadLawData를 호출합니다.
 loadLawData();
 module.exports = app;
+
 
 
 
