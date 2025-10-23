@@ -1,13 +1,12 @@
 {
   "version": 2,
   "builds": [
-    { "src": "server.js", "use": "@vercel/node" }
+    { "src": "server.js", "use": "@vercel/node" },
+    { "src": "public", "use": "@vercel/static" }
   ],
   "routes": [
     { "source": "/api/(.*)", "destination": "server.js" },
-    { "source": "/(landscape-analysis\\.js)", "destination": "/public/$1" },
-    { "source": "/", "destination": "/public/index.html" },
-    { "source": "/(.*)", "destination": "/public/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
 
