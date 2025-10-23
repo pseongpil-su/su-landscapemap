@@ -862,7 +862,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                 zIndex: 3
             };
             
-            // ⬇️ [수정] Null, NaN, Infinity 및 유효범위(Lat/Lng)까지 체크하는 헬퍼 함수
+            // Null, NaN, Infinity 및 유효범위(Lat/Lng)까지 체크하는 헬퍼 함수
             const filterAndCreatePath = (coords) => {
                 if (!Array.isArray(coords)) return [];
                 return coords
@@ -879,7 +879,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                             return false; 
                         }
                         
-                        // ⬇️ [추가] 위도/경도 유효 범위 체크
+                        // 위도/경도 유효 범위 체크
                         if (lat < -90 || lat > 90) {
                             console.warn('⚠️ 유효하지 않은 위도(Latitude) 값 필터링:', lat);
                             return false;
@@ -894,14 +894,13 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                     .map(coord => new kakao.maps.LatLng(coord[1], coord[0]));
             };
 
-            // Polygon 처리 (좌표 유효성 검사 추가)
+            // Polygon 처리 (좌표 유효성 검사 적용)
             if (geometry.type === 'Polygon') {
                 if (Array.isArray(geometry.coordinates) && Array.isArray(geometry.coordinates[0])) {
-                    const coords = geometry.coordinates[0]; // Get the outer ring
-                    // ⬇️ [수정] 필터링 함수 적용
+                    const coords = geometry.coordinates[0]; // outer ring
                     const path = filterAndCreatePath(coords);
                     
-                    if(path.length > 0) {
+                    if (path.length > 0) {
                         const polygon = new kakao.maps.Polygon({
                             map: map,
                             path: path,
@@ -909,21 +908,22 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                         });
                         currentParcelPolygons.push(polygon);
                         path.forEach(point => bounds.extend(point));
+                    } else {
+                        console.warn('⚠️ Polygon 데이터가 유효하지 않아 그리지 못했습니다.');
                     }
                 } else {
                     console.warn('⚠️ Polygon 지오메트리 좌표 데이터가 비어있습니다.');
                 }
 
-            // MultiPolygon 처리 (좌표 유효성 검사 추가)
+            // MultiPolygon 처리
             } else if (geometry.type === 'MultiPolygon') {
                 if (Array.isArray(geometry.coordinates)) {
                     geometry.coordinates.forEach(polygonCoords => {
                         if (Array.isArray(polygonCoords) && Array.isArray(polygonCoords[0])) {
-                            const coords = polygonCoords[0]; // Get the outer ring
-                            // ⬇️ [수정] 필터링 함수 적용
+                            const coords = polygonCoords[0]; // outer ring
                             const path = filterAndCreatePath(coords);
 
-                            if(path.length > 0) {
+                            if (path.length > 0) {
                                 const polygon = new kakao.maps.Polygon({
                                     map: map,
                                     path: path,
@@ -931,6 +931,8 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                                 });
                                 currentParcelPolygons.push(polygon);
                                 path.forEach(point => bounds.extend(point));
+                            } else {
+                                console.warn('⚠️ MultiPolygon 내부 폴리곤이 유효하지 않습니다.');
                             }
                         }
                     });
@@ -939,7 +941,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                 }
             }
             
-            // === [수정] useExactCoords 플래그에 따라 중심점(centerLat/Lng) 분기 처리 ===
+            // === useExactCoords 플래그에 따라 중심점(centerLat/Lng) 분기 처리 ===
             if (currentParcelPolygons.length > 0) {
                 // 경계가 그려졌는지, 유효한지 확인
                 if (bounds.isEmpty()) {
@@ -947,31 +949,27 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                     map.setCenter(new kakao.maps.LatLng(lat, lng));
                     map.setLevel(5);
                 } else if (useExactCoords) {
-                    // '이 좌표로 검색' 클릭 시
-                    // centerLat/Lng를 클릭 지점(lat, lng)으로 유지
+                    // '이 좌표로 검색' 클릭 시: 클릭 좌표 유지, 지도는 경계에 맞게 확대
                     centerLat = lat;
                     centerLng = lng;
                     console.log('✅ 분석 기준점: 클릭 좌표 사용');
-                    // 지도는 경계에 맞게 확대
                     map.setBounds(bounds);
                 } else {
-                    // '이 주소로 검색' 또는 일반 검색 시
-                    // centerLat/Lng를 경계의 중심점으로 변경
+                    // 일반 검색: 필지 중심점으로 분석 기준을 잡고 확대
                     const center = bounds.getCenter();
                     if (center) { 
                         centerLat = center.getLat();
                         centerLng = center.getLng();
                         console.log('✅ 분석 기준점: 필지 중심점 사용');
                     }
-                    // 지도는 경계에 맞게 확대
                     map.setBounds(bounds);
                 }
             } else {
-                // 유효한 폴리곤이 없으면 원본 좌표로 중심 이동
+                // 유효한 폴리곤이 없으면 원래 좌표로 중심 이동
                 map.setCenter(new kakao.maps.LatLng(lat, lng));
                 map.setLevel(5);
             }
-            // === [수정] 끝 ===
+            // === 블록 끝 ===
 
         } catch (e) {
             console.error('❌ 필지 경계 그리기 오류:', e);
@@ -985,6 +983,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
         map.setCenter(new kakao.maps.LatLng(lat, lng));
         map.setLevel(5);
     }
+
     
     // Step 2: 마커 및 원 그리기 (위 로직에서 결정된 centerLat, centerLng 사용)
     const centerCoords = new kakao.maps.LatLng(centerLat, centerLng);
@@ -1068,7 +1067,7 @@ async function analyzeLocation(lat, lng, address, detectedRegion) {
                 file: file
             });
         });
-        
+
         const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
