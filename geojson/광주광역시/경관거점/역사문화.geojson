@@ -1,0 +1,14 @@
+{
+"type": "FeatureCollection",
+"name": "역사문화",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사,문화", "거점명": "월봉서원" }, "geometry": { "type": "Point", "coordinates": [ 126.745523853431919, 35.235968215013322 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사문화", "거점명": "옛 광주교도소" }, "geometry": { "type": "Point", "coordinates": [ 126.931981463034575, 35.185286024899618 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사문화", "거점명": "아시아문화전당" }, "geometry": { "type": "Point", "coordinates": [ 126.920743552692727, 35.147363047950897 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사문화", "거점명": "양림공예특화거리" }, "geometry": { "type": "Point", "coordinates": [ 126.916883646394979, 35.140069697770087 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사,문화", "거점명": "청춘발산마을" }, "geometry": { "type": "Point", "coordinates": [ 126.890896258408901, 35.159014393322408 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사문화", "거점명": "서창" }, "geometry": { "type": "Point", "coordinates": [ 126.814834302707382, 35.116377610611053 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "역사,문화", "거점명": "고싸움놀이전수관" }, "geometry": { "type": "Point", "coordinates": [ 126.837343644862045, 35.06973286082097 ] } }
+]
+}

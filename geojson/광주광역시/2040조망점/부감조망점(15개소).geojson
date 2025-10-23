@@ -1,0 +1,22 @@
+{
+"type": "FeatureCollection",
+"name": "부감조망점(15개소)",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "번호": 1, "명칭": "장원봉 전망대", "위도": 35.158681, "경도": 126.943086, "구분": "부감_도시스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.943086, 35.158681 ] } },
+{ "type": "Feature", "properties": { "번호": 2, "명칭": "향로봉 전망대", "위도": 35.14311, "경도": 126.954123, "구분": "부감_도시스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.954123, 35.14311 ] } },
+{ "type": "Feature", "properties": { "번호": 3, "명칭": "어등산 정상", "위도": 35.168258, "경도": 126.759958, "구분": "부감_도시스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.759958, 35.168258 ] } },
+{ "type": "Feature", "properties": { "번호": 4, "명칭": "금당산 정상", "위도": 35.11654, "경도": 126.888915, "구분": "부감_도시스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.888915, 35.11654 ] } },
+{ "type": "Feature", "properties": { "번호": 5, "명칭": "삼각산(깃대봉)", "위도": 35.205219, "경도": 126.918356, "구분": "부감_도시스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.918356, 35.205219 ] } },
+{ "type": "Feature", "properties": { "번호": 6, "명칭": "5.18 기념공원", "위도": 35.155272, "경도": 126.856786, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.856786, 35.155272 ] } },
+{ "type": "Feature", "properties": { "번호": 7, "명칭": "제봉산(발산공원)", "위도": 35.154331, "경도": 126.896119, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.896119, 35.154331 ] } },
+{ "type": "Feature", "properties": { "번호": 8, "명칭": "봉림산(신용공원)", "위도": 35.173055, "경도": 126.89352, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.89352, 35.173055 ] } },
+{ "type": "Feature", "properties": { "번호": 9, "명칭": "봉정산(중외공원)", "위도": 35.179644, "경도": 126.882783, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.882783, 35.179644 ] } },
+{ "type": "Feature", "properties": { "번호": 10, "명칭": "수박등(월산공원)", "위도": 35.140575, "경도": 126.898297, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.898297, 35.140575 ] } },
+{ "type": "Feature", "properties": { "번호": 11, "명칭": "제석산 정상", "위도": 35.11775, "경도": 126.908125, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.908125, 35.11775 ] } },
+{ "type": "Feature", "properties": { "번호": 12, "명칭": "운암산 정상", "위도": 35.183281, "경도": 126.864747, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.864747, 35.183281 ] } },
+{ "type": "Feature", "properties": { "번호": 13, "명칭": "금봉산(송정공원)", "위도": 35.137617, "경도": 126.801333, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.801333, 35.137617 ] } },
+{ "type": "Feature", "properties": { "번호": 14, "명칭": "사월산 정상", "위도": 35.137617, "경도": 126.834328, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.834328, 35.137617 ] } },
+{ "type": "Feature", "properties": { "번호": 15, "명칭": "백마산 정상", "위도": 35.114203, "경도": 126.83745, "구분": "부감_지구스케일", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.83745, 35.114203 ] } }
+]
+}

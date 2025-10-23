@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "하천습지",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "구분": "수변경관거점", "구분2": "하천,습지", "거점명": "황룡강(장록습지)" }, "geometry": { "type": "Point", "coordinates": [ 126.781842004219001, 35.14149724878547 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "수변경관거점", "구분2": "하천,습지", "거점명": "영산강" }, "geometry": { "type": "Point", "coordinates": [ 126.824491566719416, 35.162608713028199 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "수변경관거점", "구분2": "하천,습지", "거점명": "풍영정천" }, "geometry": { "type": "Point", "coordinates": [ 126.812984345100816, 35.173802466485853 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "수변경관거점", "구분2": "하천,습지", "거점명": "광주천" }, "geometry": { "type": "Point", "coordinates": [ 126.874363613060183, 35.169052334846548 ] } }
+]
+}

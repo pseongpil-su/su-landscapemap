@@ -1,0 +1,30 @@
+{
+"type": "FeatureCollection",
+"name": "가로조망점(23개소)",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "번호": 19, "명칭": "어등대교", "위도": 35.16119, "경도": 126.82697, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.82697, 35.16119 ] } },
+{ "type": "Feature", "properties": { "번호": 20, "명칭": "극락대교", "위도": 35.14102, "경도": 126.828499, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.828499, 35.14102 ] } },
+{ "type": "Feature", "properties": { "번호": 21, "명칭": "광신대교", "위도": 35.177243, "경도": 126.838319, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.838319, 35.177243 ] } },
+{ "type": "Feature", "properties": { "번호": 22, "명칭": "첨단대교", "위도": 35.216878, "경도": 126.857984, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.857984, 35.216878 ] } },
+{ "type": "Feature", "properties": { "번호": 23, "명칭": "지야대교", "위도": 35.239501, "경도": 126.879101, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.879101, 35.239501 ] } },
+{ "type": "Feature", "properties": { "번호": 24, "명칭": "광천2교", "위도": 35.16864, "경도": 126.884312, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.884312, 35.16864 ] } },
+{ "type": "Feature", "properties": { "번호": 25, "명칭": "송정2교", "위도": 35.122401, "경도": 126.783695, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.783695, 35.122401 ] } },
+{ "type": "Feature", "properties": { "번호": 26, "명칭": "산동교", "위도": 35.188997, "경도": 126.859416, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.859416, 35.188997 ] } },
+{ "type": "Feature", "properties": { "번호": 27, "명칭": "평동교", "위도": 35.14337, "경도": 126.77705, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.77705, 35.14337 ] } },
+{ "type": "Feature", "properties": { "번호": 28, "명칭": "용산교", "위도": 35.245267, "경도": 126.889233, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.889233, 35.245267 ] } },
+{ "type": "Feature", "properties": { "번호": 29, "명칭": "승용교", "위도": 35.0698, "경도": 126.776399, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.776399, 35.0698 ] } },
+{ "type": "Feature", "properties": { "번호": 30, "명칭": "영산강교", "위도": 35.192522, "경도": 126.859664, "구분": "교량", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.859664, 35.192522 ] } },
+{ "type": "Feature", "properties": { "번호": 31, "명칭": "용산IC", "위도": 35.11585, "경도": 126.91965, "구분": "도로", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.91965, 35.11585 ] } },
+{ "type": "Feature", "properties": { "번호": 32, "명칭": "유덕IC", "위도": 35.16119, "경도": 126.82697, "구분": "도로", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.82697, 35.16119 ] } },
+{ "type": "Feature", "properties": { "번호": 33, "명칭": "서광주IC", "위도": 35.184945, "경도": 126.881013, "구분": "도로", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.881013, 35.184945 ] } },
+{ "type": "Feature", "properties": { "번호": 34, "명칭": "문흥JC(노동고개)", "위도": 35.189933, "경도": 126.929124, "구분": "도로", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.929124, 35.189933 ] } },
+{ "type": "Feature", "properties": { "번호": 35, "명칭": "동광주IC", "위도": 35.184839, "경도": 126.927919, "구분": "도로", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.927919, 35.184839 ] } },
+{ "type": "Feature", "properties": { "번호": 36, "명칭": "광주교대사거리", "위도": 35.163513, "경도": 126.924571, "구분": "도시관문", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.924571, 35.163513 ] } },
+{ "type": "Feature", "properties": { "번호": 37, "명칭": "남광주고가차도", "위도": 35.137665, "경도": 126.920634, "구분": "도시관문", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.920634, 35.137665 ] } },
+{ "type": "Feature", "properties": { "번호": 38, "명칭": "전남대학교", "위도": 35.173867, "경도": 126.906658, "구분": "도시관문", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.906658, 35.173867 ] } },
+{ "type": "Feature", "properties": { "번호": 39, "명칭": "광주역", "위도": 35.16434, "경도": 126.90881, "구분": "도시관문", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.90881, 35.16434 ] } },
+{ "type": "Feature", "properties": { "번호": 40, "명칭": "임동오거리", "위도": 35.15921, "경도": 126.899561, "구분": "도시관문", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.899561, 35.15921 ] } },
+{ "type": "Feature", "properties": { "번호": 41, "명칭": "백운광장", "위도": 35.133276, "경도": 126.90148, "구분": "도시관문", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.90148, 35.133276 ] } }
+]
+}

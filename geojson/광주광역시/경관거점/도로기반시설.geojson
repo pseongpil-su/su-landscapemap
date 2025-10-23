@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "도로기반시설",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "도로기반시설", "거점명": "첨단대교" }, "geometry": { "type": "Point", "coordinates": [ 126.858672397894253, 35.216519815954236 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "도로기반시설", "거점명": "광신대교" }, "geometry": { "type": "Point", "coordinates": [ 126.840080194593952, 35.176870384592156 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "도로기반시설", "거점명": "어등대교" }, "geometry": { "type": "Point", "coordinates": [ 126.824079111544208, 35.161109723630211 ] } }
+]
+}

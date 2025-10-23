@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "예술산업",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "예술,산업", "거점명": "평동산단" }, "geometry": { "type": "Point", "coordinates": [ 126.765369356443117, 35.133309741670573 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상진경관거점", "구분2": "예술,산업", "거점명": "하남산단" }, "geometry": { "type": "Point", "coordinates": [ 126.802034030911202, 35.194086925668714 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "예술,산업", "거점명": "일신전남방직" }, "geometry": { "type": "Point", "coordinates": [ 126.891476416923197, 35.163643043688147 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "예술,산업", "거점명": "양동시장" }, "geometry": { "type": "Point", "coordinates": [ 126.903354540149095, 35.154080630337596 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "예술,산업", "거점명": "대인시장" }, "geometry": { "type": "Point", "coordinates": [ 126.917171734054946, 35.153638111274617 ] } }
+]
+}

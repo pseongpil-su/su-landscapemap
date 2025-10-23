@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경관검토 시스템</title>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9265fac841f1fdd80488f98657108818&libraries=services"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: white;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            z-index: 10; /* 모바일 패널보다 위에 있을 필요는 없지만, 기본 레이어보다 높게 */
+        }
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .left-panel {
+            width: 320px;
+            background: white;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out; /* 모바일용 트랜지션 */
+        }
+        .search-section {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .radius-control {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .radius-control label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .radius-control input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .radius-control .value {
+            text-align: center;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        #searchInput {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        #searchBtn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #searchBtn:hover {
+            background: #5568d3;
+        }
+        #resetBtn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f1f3f5;
+            color: #555;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        #resetBtn:hover {
+            background: #e9ecef;
+        }
+        .layers-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        /* --- 3계층 레이어 스타일 --- */
+        .region-container {
+            margin-bottom: 10px;
+            border: 1px solid #667eea; /* 지역 구분선 */
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .region-header {
+            background: #e8eaf6; /* 지역 헤더 색상 */
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 15px;
+        }
+        .region-header:hover {
+            background: #c5cae9;
+        }
+        .region-header .title {
+            flex: 1;
+            font-weight: bold;
+            color: #3f51b5;
+        }
+        .region-items {
+            display: none;
+            background: white;
+            padding: 10px;
+        }
+        .region-items.active {
+            display: block;
+        }
+
+        .layer-category {
+            margin-bottom: 10px; /* 카테고리 간격 */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .category-header {
+            background: #f8f9fa;
+            padding: 10px 15px; /* 카테고리 패딩 조정 */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .category-header:hover {
+            background: #e9ecef;
+        }
+        .category-header input[type="checkbox"],
+        .region-header input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .category-header .title {
+            flex: 1;
+            font-weight: bold;
+            color: #333;
+        }
+        .category-header .count,
+        .region-header .count {
+            font-size: 12px;
+            color: #666;
+        }
+        .category-items {
+            display: none;
+            padding: 10px;
+            background: white;
+        }
+        .category-items.active{
+            display: block; /* 하위 항목이 열리도록 */
+        }
+        /* --- 3계층 스타일 끝 --- */
+
+        .layer-item {
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 4px;
+        }
+        .layer-item:hover {
+            background: #f8f9fa;
+        }
+        .layer-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .layer-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .layer-item .status {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            color: #666;
+        }
+        .layer-item .status.exists {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        .right-panel {
+            width: 0;
+            background: white;
+            border-left: 1px solid #ddd;
+            transition: width 0.3s, transform 0.3s ease-in-out; /* 모바일용 transform 추가 */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .right-panel.open {
+            width: 400px;
+        }
+        .right-panel.open-wide {
+            width: 600px;
+        }
+        .panel-toggles {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-toggle {
+            background: #667eea;
+            color: white;
+            padding: 20px 8px;
+            cursor: pointer;
+            z-index: 10;
+            writing-mode: vertical-rl;
+            font-weight: bold;
+            font-size: 14px;
+            border-bottom: 1px solid #5568d3;
+            transition: background 0.2s;
+        }
+        .panel-toggle:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        .panel-toggle:last-child {
+            border-radius: 0 0 0 8px;
+            border-bottom: none;
+        }
+        .panel-toggle:hover {
+            background: #5568d3;
+        }
+        .panel-toggle.active {
+            background: #3c4aa8;
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto; /* 기본 스크롤은 패널 자체에 */
+            padding: 20px;
+            display: none; 
+            flex-direction: column;
+        }
+        .panel-content.active {
+            display: flex; 
+        }
+        /* AI 검토 탭은 내부에서 스크롤을 제어하므로 padding 0 */
+        .panel-content#aiContent {
+            padding: 0;
+            overflow: hidden;
+        }
+        .panel-content h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            /* AI 탭 h3는 내부 패딩으로 처리 */
+        }
+        #aiContent h3 {
+            padding: 20px 20px 0 20px;
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+
+        .result-section {
+            margin-bottom: 25px;
+        }
+        .result-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .result-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .analysis-group {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .analysis-group h4 {
+            font-size: 16px;
+            color: #333;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .analysis-group h4.overlap-bar { border-left: 5px solid #ff6b6b; }
+        .analysis-group h4.nearby-bar { border-left: 5px solid #4caf50; }
+        .analysis-group ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .analysis-group li {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .analysis-group li strong {
+            color: #111;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+        .analysis-group li.none {
+            color: #999;
+            font-style: italic;
+        }
+        .result-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .result-item .distance {
+            font-size: 12px;
+            color: #666;
+        }
+        .empty-result {
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+        .circles-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 5;
+            max-height: 50px;
+            overflow: hidden;
+            transition: max-height 0.3s;
+            cursor: pointer;
+        }
+        .circles-legend.expanded {
+            max-height: 300px;
+        }
+        .circles-legend h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+            user-select: none;
+        }
+        .circles-legend .circle-items {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .circles-legend.expanded .circle-items {
+            opacity: 1;
+        }
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 5px;
+            flex-direction: column;
+        }
+        .map-control-btn {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .map-control-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .map-control-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .circle-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        .circle-item .color {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        /* --- 컨텍스트 메뉴 스타일 --- */
+        .context-menu {
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            width: 280px;
+        }
+        .context-menu .context-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 16px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .context-menu .context-close:hover {
+            color: #333;
+        }
+        .context-menu div {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .context-menu div:last-of-type {
+            margin-bottom: 12px;
+        }
+        .context-menu strong {
+            display: inline-block;
+            width: 65px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .context-search-btn {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .context-search-btn:hover {
+            background: #5568d3;
+        }
+        .context-search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- AI 채팅 UI (신규 레이아웃) --- */
+        #aiChatContainer {
+            flex: 1; /* h3를 제외한 모든 공간 차지 */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* 내부 스크롤 제어 */
+            background: #f8f9fa;
+            margin: 15px 20px 20px 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        #chatHistory {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-message {
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+        .ai-message {
+            background: #ffffff;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            white-space: pre-wrap; /* AI 응답은 줄바꿈 유지 */
+            border: 1px solid #e0e0e0;
+        }
+        /* AI 메시지 내부의 서식 */
+        .ai-message h3 {
+            color: #333; 
+            margin-top: 15px; 
+            margin-bottom: 5px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 5px;
+            font-size: 1.1em;
+        }
+        .ai-message ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        .ai-message li {
+            margin-bottom: 5px;
+        }
+
+        #chatInputArea {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+            padding: 15px;
+            background: #f1f3f5;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        #chatInput {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        #chatInput:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+        #chatSendBtn {
+            padding: 10px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #chatSendBtn:hover {
+            background: #5568d3;
+        }
+        #chatSendBtn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* --- 모바일 반응형 UI (신규) --- */
+        .left-panel-toggle {
+            display: none; /* 데스크톱에서는 숨김 */
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+            .header p {
+                font-size: 12px;
+            }
+
+            .main-container {
+                flex-direction: row; /* 자식 요소들을 position: absolute로 제어 */
+                position: relative;
+                overflow: hidden; /* 모바일에서 중요 */
+            }
+
+            /* --- Left Panel (Mobile) --- */
+            .left-panel {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 300px; /* 오버레이 너비 */
+                max-width: 85vw; /* 최대 너비 */
+                z-index: 1001; /* 맵 컨트롤보다 위 */
+                box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            .left-panel.open {
+                transform: translateX(0);
+            }
+            .layers-section {
+                /* 모바일에서 왼쪽 패널 스크롤 보장 */
+                flex: 1;
+                overflow-y: auto;
+            }
+            .left-panel-toggle {
+                display: block; /* 모바일에서 보이기 */
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                z-index: 1000; /* 맵 위에, 패널보다 아래 */
+                background: white;
+                border: 2px solid #ddd;
+                padding: 8px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            /* --- Map Container (Mobile) --- */
+            .map-container {
+                flex: 1;
+            }
+            .map-controls {
+                /* 왼쪽 토글 버튼과 겹치지 않게 이동 */
+                top: 70px;
+                right: 15px;
+            }
+            .circles-legend {
+                left: 15px;
+                bottom: 15px;
+            }
+
+            /* --- Right Panel (Mobile) --- */
+            .right-panel {
+                position: absolute;
+                top: 0;
+                right: 0;
+                height: 100%;
+                width: 300px; /* 오버레이 너비 */
+                max-width: 85vw; /* 최대 너비 */
+                z-index: 1001;
+                box-shadow: -4px 0 15px rgba(0,0,0,0.2);
+                transform: translateX(100%);
+                transition: transform 0.3s ease-in-out;
+                width: 300px !important; /* 강제 지정 */
+            }
+            .right-panel.open,
+            .right-panel.open-wide {
+                transform: translateX(0);
+                width: 300px !important; /* 모바일에선 항상 동일한 너비 */
+            }
+            .panel-toggles {
+                /* 오른쪽 패널 토글 버튼 위치 - 하단 우측 */
+                position: absolute;
+                top: auto;
+                bottom: 15px;
+                right: 15px;
+                left: auto;
+                transform: none;
+                z-index: 1000;
+                flex-direction: row;
+                gap: 8px;
+            }
+            .panel-toggle {
+                writing-mode: horizontal-tb;
+                border-radius: 6px;
+                padding: 8px 12px;
+                border: 2px solid #ddd;
+                background: white;
+                color: #667eea;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            .panel-toggle.active {
+                background: #667eea;
+                color: white;
+            }
+        }
+        /* --- 반응형 UI 끝 --- */
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏙️ 경관검토 시스템</h1>
+        <p>광주광역시 2040 도시경관계획 기반 분석 도구</p>
+    </div>
+
+    <div class="main-container">
+        <div class="left-panel" id="leftPanel"> <!-- ID 추가 -->
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="주소 또는 장소명 입력">
+                    <button id="searchBtn">검색</button>
+                </div>
+                <div class="radius-control">
+                    <label for="radiusSlider">🎯 검색 반경</label>
+                    <input type="range" id="radiusSlider" min="0.5" max="3.0" step="0.5" value="1.0">
+                    <div class="value" id="radiusValue">1.0 km</div>
+                </div>
+                <button id="resetBtn" class="reset-btn">🔄 초기화</button>
+            </div>
+
+            <div class="layers-section" id="layersSection">
+                </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="loading" id="loading">분석 중...</div>
+            
+            <!-- === [신규] 모바일용 왼쪽 패널 토글 버튼 === -->
+            <button class="left-panel-toggle">☰</button>
+            
+            <div class="map-controls">
+                <button class="map-control-btn base-map-btn active" onclick="changeMapType('ROADMAP')">일반지도</button>
+                <button class="map-control-btn base-map-btn" onclick="changeMapType('SKYVIEW')">항공사진</button>
+                <button class="map-control-btn base-map-btn" onclick="changeMapType('HYBRID')">하이브리드</button>
+                <button class="map-control-btn" onclick="toggleCadastralMap(this)">지적편집도</button>
+            </div>
+            
+            <div class="circles-legend" id="circlesLegend" onclick="toggleLegend()">
+                <h4>📏 검색 반경 ▼</h4>
+                <div class="circle-items">
+                    <div class="circle-item"><div class="color" style="background: #ff6b6b;"></div><span>0.5km</span></div>
+                    <div class="circle-item"><div class="color" style="background: #ffa726;"></div><span>1.0km</span></div>
+                    <div class="circle-item"><div class="color" style="background: #ffeb3b;"></div><span>1.5km</span></div>
+                    <div class="circle-item"><div class="color" style="background: #66bb6a;"></div><span>2.0km</span></div>
+                    <div class="circle-item"><div class="color" style="background: #42a5f5;"></div><span>2.5km</span></div>
+                    <div class="circle-item"><div class="color" style="background: #ab47bc;"></div><span>3.0km</span></div>
+                </div>
+            </div>
+
+            <div class="panel-toggles">
+                <div class="panel-toggle active" id="toggleDetails" onclick="showRightPanelTab('details')">상세결과</div>
+                <div class="panel-toggle" id="toggleAI" onclick="showRightPanelTab('ai')">AI 검토</div>
+            </div>
+        </div>
+
+        <div class="right-panel" id="rightPanel">
+            <div class="panel-content active" id="detailsContent">
+                <h3>📋 상세결과</h3>
+                <div class="empty-result">
+                    지점을 검색하세요.
+                </div>
+            </div>
+            
+            <!-- ============================================= -->
+            <!-- ===== ⬇️ 여기가 수정된 AI 검토 탭입니다 ⬇️ ===== -->
+            <!-- ============================================= -->
+            <div class="panel-content" id="aiContent">
+                <h3>🤖 AI 경관 검토 챗봇</h3>
+                
+                <!-- AI 검토 결과 + 채팅창을 담는 컨테이너 -->
+                <div id="aiChatContainer">
+                    <div id="chatHistory">
+                        <!-- 초기 안내 메시지 -->
+                        <div class="chat-message ai-message">
+                            <div class="empty-result" style="padding: 0; text-align: left; color: #555;">
+                                먼저 좌측에서 지번을 검색하세요.<br>
+                                검색이 완료되면, 이 곳에 사업 개요(예: "건축물, 20층, 50000㎡")를 입력하여 검토를 시작하세요.
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chatInputArea">
+                        <input type="text" id="chatInput" placeholder="지번 검색을 먼저 완료해주세요..." disabled>
+                        <button id="chatSendBtn" disabled>보내기</button>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================= -->
+            <!-- ===== ⬆️ 여기까지가 수정된 부분입니다 ⬆️ ===== -->
+            <!-- ============================================= -->
+
+        </div>
+    </div>
+
+    <script src="landscape-analysis.js"></script>
+</body>
+</html>
+

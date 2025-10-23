@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "관문광장",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "동림IC" }, "geometry": { "type": "Point", "coordinates": [ 126.864268154979229, 35.192821607099731 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "광주TG" }, "geometry": { "type": "Point", "coordinates": [ 126.808249546837018, 35.25189757334217 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "유덕교차로" }, "geometry": { "type": "Point", "coordinates": [ 126.848403284763521, 35.163140457634348 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "운암고가" }, "geometry": { "type": "Point", "coordinates": [ 126.88454052342054, 35.173255798667178 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "동광중IC" }, "geometry": { "type": "Point", "coordinates": [ 126.927574877940174, 35.184291731537648 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "농성광장" }, "geometry": { "type": "Point", "coordinates": [ 126.885400397445594, 35.153012150212675 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "백운광장" }, "geometry": { "type": "Point", "coordinates": [ 126.901366894755839, 35.133421268084668 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "도시관문경관거점", "구분2": "관문,광장", "거점명": "지원IC" }, "geometry": { "type": "Point", "coordinates": [ 126.935358480053878, 35.115765171712106 ] } }
+]
+}

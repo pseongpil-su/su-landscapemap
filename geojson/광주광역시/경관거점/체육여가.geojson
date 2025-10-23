@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"name": "체육여가",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "월드컵경기장" }, "geometry": { "type": "Point", "coordinates": [ 126.874899118707972, 35.133680706742048 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "염주체육관" }, "geometry": { "type": "Point", "coordinates": [ 126.878885811124121, 35.135337666788402 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "국제테니스장" }, "geometry": { "type": "Point", "coordinates": [ 126.901887090881146, 35.111800855407765 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "챔피언스필드" }, "geometry": { "type": "Point", "coordinates": [ 126.889120609325559, 35.168118119042603 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "중외공원" }, "geometry": { "type": "Point", "coordinates": [ 126.883205132075432, 35.179833775176157 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "우치공원" }, "geometry": { "type": "Point", "coordinates": [ 126.891603780807998, 35.22260837719729 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "시립국제수영장" }, "geometry": { "type": "Point", "coordinates": [ 126.839266855807139, 35.205424848102979 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "어등산CC" }, "geometry": { "type": "Point", "coordinates": [ 126.772580785543951, 35.165246079670126 ] } },
+{ "type": "Feature", "properties": { "id": null, "구분": "문화상징경관거점", "구분2": "체육,여가", "거점명": "유니버시아드체육관" }, "geometry": { "type": "Point", "coordinates": [ 126.798486685234693, 35.164645154271639 ] } }
+]
+}

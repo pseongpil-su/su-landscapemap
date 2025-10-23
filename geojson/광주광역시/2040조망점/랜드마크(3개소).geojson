@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "랜드마크(3개소)",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "번호": 16, "명칭": "양림타워(사직공원)", "위도": 35.141594, "경도": 126.911667, "구분": "랜드마크", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.911667, 35.141594 ] } },
+{ "type": "Feature", "properties": { "번호": 17, "명칭": "아시아 문화전당", "위도": 35.14743, "경도": 126.91935, "구분": "랜드마크", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.91935, 35.14743 ] } },
+{ "type": "Feature", "properties": { "번호": 18, "명칭": "종합버스터미널", "위도": 35.16136, "경도": 126.8794, "구분": "랜드마크", "조망대상": null }, "geometry": { "type": "Point", "coordinates": [ 126.8794, 35.16136 ] } }
+]
+}
