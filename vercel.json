@@ -7,13 +7,13 @@
       "config": {
         "includeFiles": [
           "law.json",
-          "geojson/**"
+          "geojson/**",
+          "public/**"
         ]
       }
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "server.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/(.*)", "dest": "server.js" }
   ]
 }
