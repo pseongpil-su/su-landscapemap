@@ -8,6 +8,9 @@ const app = express();
 // Vercel은 포트를 자동으로 할당하므로 PORT 상수는 제거합니다.
 app.use(express.static('public'));
 
+// ⬇️ [추가] JSON 요청 본문을 해석하기 위한 미들웨어
+app.use(express.json());
+
 // === [수정] dotenv 로드 (환경 변수 사용) ===
 // .env 파일의 변수를 process.env로 로드합니다.
 require('dotenv').config();
@@ -830,6 +833,7 @@ app.post('/api/gemini/chat', async (req, res) => {
 // 로컬 테스트 및 Vercel 초기 실행을 위해 loadLawData를 호출합니다.
 loadLawData();
 module.exports = app;
+
 
 
 
