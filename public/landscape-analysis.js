@@ -45,21 +45,29 @@ function initMap() {
         displayContextMenu(latLng);
     });
 
-    kakao.maps.event.addListener(map, 'click', function() {
+    // === [수정] 맵 클릭/터치 시 팝업 및 패널 닫기 핸들러 ===
+    const onMapClickOrTouch = function() {
         closeContextMenu();
-        // === [수정] 모바일에서 맵 클릭 시 왼쪽 패널 닫기 ===
+        
+        // 모바일에서 맵 클릭 시 왼쪽 패널 닫기
         const leftPanel = document.getElementById('leftPanel');
         if (leftPanel) {
             leftPanel.classList.remove('open');
         }
-        // === [수정] 모바일에서 맵 클릭 시 오른쪽 패널 닫기 ===
+        // 모바일에서 맵 클릭 시 오른쪽 패널 닫기
         const rightPanel = document.getElementById('rightPanel');
         if (rightPanel) {
             rightPanel.classList.remove('open', 'open-wide');
             document.querySelectorAll('.panel-toggle').forEach(t => t.classList.remove('active'));
         }
-        // === [수정] 끝 ===
-    });
+    };
+
+    // 기존 click 리스너 (데스크톱 및 일반)
+    kakao.maps.event.addListener(map, 'click', onMapClickOrTouch);
+    
+    // [수정] 모바일 신뢰성을 위한 touchstart 리스너 추가 (2번 요청사항)
+    kakao.maps.event.addListener(map, 'touchstart', onMapClickOrTouch);
+    // === [수정] 끝 ===
 }
 
 function closeContextMenu() {
@@ -108,10 +116,20 @@ function displayContextMenu(latLng) {
             `;
             // === [수정] 끝 ===
 
-            contentDiv.querySelector('.context-close').onclick = function(e) {
-                e.stopPropagation(); 
+            // === [수정] 모바일 호환을 위해 click 및 touchstart 이벤트 핸들러로 변경 (1번 요청사항) ===
+            const closeBtn = contentDiv.querySelector('.context-close');
+            
+            const handleCloseClick = function(e) {
+                e.stopPropagation(); // 맵 클릭/터치 이벤트 전파 방지
+                e.preventDefault();  // 기본 터치 동작(예: 확대/축소) 방지
                 closeContextMenu();
             };
+
+            // 데스크톱용 click
+            closeBtn.addEventListener('click', handleCloseClick);
+            // 모바일용 touchstart
+            closeBtn.addEventListener('touchstart', handleCloseClick); 
+            // === [수정] 끝 ===
             
             // 1. 주소로 검색 (기존)
             const searchAddressBtn = contentDiv.querySelector('#contextSearchAddress');
