@@ -717,7 +717,7 @@ ${JSON.stringify(lawDataJson, null, 2)}
 `;
     }
 
-    return prompt;
+    return prompt.trim(); // [수정] 양 끝의 공백 제거
 }
 
 app.post('/api/gemini/analyze_chat', async (req, res) => {
