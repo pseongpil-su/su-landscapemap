@@ -160,7 +160,15 @@ function getDistance(lat1, lng1, lat2, lng2) {
 // =================================================================
 app.post('/api/analyze', async (req, res) => {
     try {
-        const { lat, lng, layers, radius = 3.0, parcelGeometry } = req.body;
+        // ⬇️ [수정] layers가 비어있을 수 있으므로 기본값 {} 할당
+        const { lat, lng, layers = {}, radius = 3.0, parcelGeometry } = req.body;
+        
+        // ⬇️ [추가] layers가 객체인지 확인 (잘못된 요청 방어)
+        if (typeof layers !== 'object' || Array.isArray(layers) || layers === null) {
+            console.warn('⚠️ 분석 요청에 유효하지 않은 layers 데이터가 포함되었습니다.');
+            return res.status(400).json({ error: '유효하지 않은 layers 형식' });
+        }
+        
         console.log(`\n🔍 경관 분석 시작: ${lat}, ${lng}, 반경: ${radius}km`);
 
         const results = {
@@ -180,16 +188,27 @@ app.post('/api/analyze', async (req, res) => {
             }
         }
 
+        // ⬇️ [수정] 이제 layers에는 '체크된' 항목만 들어옵니다.
         for (const [region, categories] of Object.entries(layers)) {
+            // ⬇️ [추가] categories가 유효한 객체인지 확인
+            if (typeof categories !== 'object' || categories === null) continue;
+
             for (const [category, items] of Object.entries(categories)) {
                 
-                if (!items || items.length === 0) continue;
+                // ⬇️ [수정] items가 배열이 아니거나 비어있으면 스킵
+                if (!Array.isArray(items) || items.length === 0) continue;
 
                 if (!results.overlap[category]) results.overlap[category] = [];
                 if (!results.nearby[category]) results.nearby[category] = [];
 
                 for (const item of items) {
                     try {
+                        // ⬇️ [추가] item 형식이 올바른지 확인
+                        if (!item || typeof item.file !== 'string' || typeof item.name !== 'string') {
+                            console.warn('⚠️ 잘못된 layer item 형식:', item);
+                            continue;
+                        }
+                        
                         // === [수정] Vercel 환경을 위해 GEOJSON_DIR 경로 사용 ===
                         const filePath = path.join(GEOJSON_DIR, region, category, item.file);
                         const data = await fs.readFile(filePath, 'utf8');
@@ -282,7 +301,12 @@ app.post('/api/analyze', async (req, res) => {
                             }
                         }
                     } catch (error) {
-                        console.log(`⚠️ ${region}/${category}/${item.file} 로드 실패:`, error.message);
+                        // ⬇️ [수정] 파일이 없을 수 있으므로(ENOENT), 오류 레벨을 낮춤
+                        if (error.code === 'ENOENT') {
+                            console.warn(`⚠️ GeoJSON 파일 없음: ${region}/${category}/${item.file}`);
+                        } else {
+                            console.error(`❌ ${region}/${category}/${item.file} 처리 실패:`, error.message);
+                        }
                     }
                 }
             }
@@ -353,9 +377,8 @@ app.post('/api/search/address', async (req, res) => {
                     cql_filter: `pnu='${pnu}'`,
                     srsname: 'EPSG:4326',
                     output: 'application/json', key: VWORLD_API_KEY, 
+                    // ⬇️ [수정] Vercel 배포 시에도 domain 파라미터 *필수*
                     domain: 'https://su-landscapemap-v2.vercel.app',
-                    // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-                    // domain: 'http://localhost:3000'
                 };
                 
                 const wfsResponse = await axios.get(wfsUrl, { params: wfsParams, timeout: 10000 });
@@ -384,9 +407,8 @@ app.post('/api/search/address', async (req, res) => {
                 bbox: bbox, 
                 srsname: 'EPSG:4326',
                 output: 'application/json', key: VWORLD_API_KEY, 
+                // ⬇️ [수정] Vercel 배포 시에도 domain 파라미터 *필수*
                 domain: 'https://su-landscapemap-v2.vercel.app'
-                // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-                // domain: 'http://localhost:3000'
             };
 
             try {
@@ -511,9 +533,8 @@ app.get('/api/parcel', async (req, res) => {
                     cql_filter: `pnu='${pnu}'`, 
                     srsname: 'EPSG:4326',
                     output: 'application/json', key: VWORLD_API_KEY, 
+                    // ⬇️ [수정] Vercel 배포 시에도 domain 파라미터 *필수*
                     domain: 'https://su-landscapemap-v2.vercel.app',
-                    // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-                    // domain: 'http://localhost:3000'
                 };
 
                 const response = await axios.get(wfsUrl, { params: wfsParams, timeout: 10000 });
@@ -542,9 +563,8 @@ app.get('/api/parcel', async (req, res) => {
             bbox: bbox, 
             srsname: 'EPSG:4326',
             output: 'application/json', key: VWORLD_API_KEY, 
+            // ⬇️ [수정] Vercel 배포 시에도 domain 파라미터 *필수*
             domain: 'https://su-landscapemap-v2.vercel.app',
-            // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-            // domain: 'http://localhost:3000'
         };
 
         const response = await axios.get(wfsUrl_fallback, { params: params_fallback, timeout: 10000 });
@@ -840,5 +860,3 @@ app.post('/api/gemini/chat', async (req, res) => {
 // 로컬 테스트 및 Vercel 초기 실행을 위해 loadLawData를 호출합니다.
 loadLawData();
 module.exports = app;
-
-
