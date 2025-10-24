@@ -89,10 +89,11 @@ function displayContextMenu(latLng) {
             const contentDiv = document.createElement('div');
             contentDiv.className = 'context-menu';
             // === [수정] 버튼 텍스트 및 레이아웃 변경 (2차 수정) ===
+            // ⬇️ [수정] 3. 모바일 'x' 버튼 수정을 위해 style 변경 (padding, z-index 추가)
             contentDiv.innerHTML = `
                 <div class="context-menu-header" style="padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #eee; cursor: move; user-select: none; padding-right: 20px; position: relative;">
                     <strong>주소 정보</strong>
-                    <span class="context-close" style="position: absolute; top: -2px; right: 0; cursor: pointer; font-size: 16px; color: #999;">✖</span>
+                    <span class="context-close" style="position: absolute; top: 0px; right: 0px; cursor: pointer; font-size: 16px; color: #999; z-index: 102; padding: 8px 12px; line-height: 1;">✖</span>
                 </div>
                 <div><strong>지번주소</strong> ${jibun}</div>
                 <div><strong>도로명</strong> ${road}</div>
@@ -141,6 +142,13 @@ function displayContextMenu(latLng) {
             let onDrag, onDragEnd;
 
             header.onmousedown = function(e) {
+                // ⬇️ [수정] 3. 모바일 'x' 버튼 오류 수정
+                // 닫기 버튼을 클릭(탭)한 경우에는 드래그를 시작하지 않음
+                if (e.target.classList.contains('context-close')) {
+                    return; 
+                }
+                // [수정] 끝
+
                 e.preventDefault(); 
                 let startX = e.clientX;
                 let startY = e.clientY;
@@ -862,7 +870,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                 zIndex: 3
             };
             
-            // Null, NaN, Infinity 및 유효범위(Lat/Lng)까지 체크하는 헬퍼 함수
+            // ⬇️ [수정] Null, NaN, Infinity 및 유효범위(Lat/Lng)까지 체크하는 헬퍼 함수
             const filterAndCreatePath = (coords) => {
                 if (!Array.isArray(coords)) return [];
                 return coords
@@ -879,7 +887,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                             return false; 
                         }
                         
-                        // 위도/경도 유효 범위 체크
+                        // ⬇️ [추가] 위도/경도 유효 범위 체크
                         if (lat < -90 || lat > 90) {
                             console.warn('⚠️ 유효하지 않은 위도(Latitude) 값 필터링:', lat);
                             return false;
@@ -894,13 +902,14 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                     .map(coord => new kakao.maps.LatLng(coord[1], coord[0]));
             };
 
-            // Polygon 처리 (좌표 유효성 검사 적용)
+            // Polygon 처리 (좌표 유효성 검사 추가)
             if (geometry.type === 'Polygon') {
                 if (Array.isArray(geometry.coordinates) && Array.isArray(geometry.coordinates[0])) {
-                    const coords = geometry.coordinates[0]; // outer ring
+                    const coords = geometry.coordinates[0]; // Get the outer ring
+                    // ⬇️ [수정] 필터링 함수 적용
                     const path = filterAndCreatePath(coords);
                     
-                    if (path.length > 0) {
+                    if(path.length > 0) {
                         const polygon = new kakao.maps.Polygon({
                             map: map,
                             path: path,
@@ -908,22 +917,21 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                         });
                         currentParcelPolygons.push(polygon);
                         path.forEach(point => bounds.extend(point));
-                    } else {
-                        console.warn('⚠️ Polygon 데이터가 유효하지 않아 그리지 못했습니다.');
                     }
                 } else {
                     console.warn('⚠️ Polygon 지오메트리 좌표 데이터가 비어있습니다.');
                 }
 
-            // MultiPolygon 처리
+            // MultiPolygon 처리 (좌표 유효성 검사 추가)
             } else if (geometry.type === 'MultiPolygon') {
                 if (Array.isArray(geometry.coordinates)) {
                     geometry.coordinates.forEach(polygonCoords => {
                         if (Array.isArray(polygonCoords) && Array.isArray(polygonCoords[0])) {
-                            const coords = polygonCoords[0]; // outer ring
+                            const coords = polygonCoords[0]; // Get the outer ring
+                            // ⬇️ [수정] 필터링 함수 적용
                             const path = filterAndCreatePath(coords);
 
-                            if (path.length > 0) {
+                            if(path.length > 0) {
                                 const polygon = new kakao.maps.Polygon({
                                     map: map,
                                     path: path,
@@ -931,8 +939,6 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                                 });
                                 currentParcelPolygons.push(polygon);
                                 path.forEach(point => bounds.extend(point));
-                            } else {
-                                console.warn('⚠️ MultiPolygon 내부 폴리곤이 유효하지 않습니다.');
                             }
                         }
                     });
@@ -941,7 +947,7 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                 }
             }
             
-            // === useExactCoords 플래그에 따라 중심점(centerLat/Lng) 분기 처리 ===
+            // === [수정] useExactCoords 플래그에 따라 중심점(centerLat/Lng) 분기 처리 ===
             if (currentParcelPolygons.length > 0) {
                 // 경계가 그려졌는지, 유효한지 확인
                 if (bounds.isEmpty()) {
@@ -949,27 +955,31 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
                     map.setCenter(new kakao.maps.LatLng(lat, lng));
                     map.setLevel(5);
                 } else if (useExactCoords) {
-                    // '이 좌표로 검색' 클릭 시: 클릭 좌표 유지, 지도는 경계에 맞게 확대
+                    // '이 좌표로 검색' 클릭 시
+                    // centerLat/Lng를 클릭 지점(lat, lng)으로 유지
                     centerLat = lat;
                     centerLng = lng;
                     console.log('✅ 분석 기준점: 클릭 좌표 사용');
+                    // 지도는 경계에 맞게 확대
                     map.setBounds(bounds);
                 } else {
-                    // 일반 검색: 필지 중심점으로 분석 기준을 잡고 확대
+                    // '이 주소로 검색' 또는 일반 검색 시
+                    // centerLat/Lng를 경계의 중심점으로 변경
                     const center = bounds.getCenter();
                     if (center) { 
                         centerLat = center.getLat();
                         centerLng = center.getLng();
                         console.log('✅ 분석 기준점: 필지 중심점 사용');
                     }
+                    // 지도는 경계에 맞게 확대
                     map.setBounds(bounds);
                 }
             } else {
-                // 유효한 폴리곤이 없으면 원래 좌표로 중심 이동
+                // 유효한 폴리곤이 없으면 원본 좌표로 중심 이동
                 map.setCenter(new kakao.maps.LatLng(lat, lng));
                 map.setLevel(5);
             }
-            // === 블록 끝 ===
+            // === [수정] 끝 ===
 
         } catch (e) {
             console.error('❌ 필지 경계 그리기 오류:', e);
@@ -983,7 +993,6 @@ async function displaySearchResult(lat, lng, address, geometry = null, useExactC
         map.setCenter(new kakao.maps.LatLng(lat, lng));
         map.setLevel(5);
     }
-
     
     // Step 2: 마커 및 원 그리기 (위 로직에서 결정된 centerLat, centerLng 사용)
     const centerCoords = new kakao.maps.LatLng(centerLat, centerLng);
@@ -1042,18 +1051,23 @@ function drawCircles(lat, lng) {
     });
 }
 
+// =================================================================
+// ⬇️ [수정] 2. '상세결과' 오류 수정 ⬇️
+// =================================================================
 async function analyzeLocation(lat, lng, address, detectedRegion) {
     try {
         // [수정 시작]
-        // 기존의 layersData를 순회하는 대신,
-        // 실제 '체크된' 체크박스만 찾아서 selectedLayers 객체를 만듭니다.
+        // 1. '체크된' 체크박스만 찾아서 selectedLayers 객체를 만듭니다.
         const selectedLayers = {};
         const checkedItems = document.querySelectorAll('.item-checkbox:checked');
         
+        console.log(`📊 ${checkedItems.length}개의 활성 레이어로 분석 시작...`);
+        
         checkedItems.forEach(cb => {
-            // dataset에서 region, category, name, file 정보를 가져옵니다.
+            // 2. dataset에서 region, category, name, file 정보를 가져옵니다.
             const { region, category, name, file } = cb.dataset;
             
+            // 3. 서버가 요구하는 3계층 형식으로 데이터를 재조립합니다.
             if (!selectedLayers[region]) {
                 selectedLayers[region] = {};
             }
@@ -1061,28 +1075,41 @@ async function analyzeLocation(lat, lng, address, detectedRegion) {
                 selectedLayers[region][category] = [];
             }
             
-            // 서버가 요구하는 형식(이름, 파일)으로 추가합니다.
+            // 4. 서버가 요구하는 형식(이름, 파일)으로 추가합니다.
             selectedLayers[region][category].push({
                 name: name,
                 file: file
             });
         });
-
+        // [수정 끝]
+        
         const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 lat, 
                 lng, 
+                // ⬇️ [수정] layersData 대신 'selectedLayers' 전송
                 layers: selectedLayers, 
                 radius: currentRadius,
                 parcelGeometry: currentParcelGeometry // (displaySearchResult에서 설정된 전역 변수 사용)
             })
         });
         
+        // ⬇️ [추가] 500 오류 발생 시 JSON 파싱 전에 체크
+        if (!response.ok) {
+            // 서버가 500 에러 등을 반환하면 (response.ok === false)
+            // .json()을 호출하기 전에 미리 에러를 발생시킵니다.
+            const errorText = await response.text();
+            console.error('❌ 분석 API 서버 오류:', response.status, errorText);
+            throw new Error(`서버 분석 실패 (HTTP ${response.status})`);
+        }
+        
         const result = await response.json();
         
         if (result.success) {
+            console.log('✅ 분석 성공:', result.data);
+            
             currentAnalysisData = { 
                 overlap: result.data.overlap, 
                 nearby: result.data.nearby 
@@ -1117,11 +1144,32 @@ AI가 심의 대상을 판단할 수 있도록 아래 예시를 참고하여 <st
 
             // === [수정] 상세 결과 표시에 분석에 사용된 lat, lng 전달 ===
             await displayAnalysisResult(result.data, address, lat, lng, detectedRegion);
+        } else {
+             // ⬇️ [추가] result.success === false 인 경우 (서버 로직 내에서 발생한 실패)
+             console.warn('⚠️ 분석 실패 (서버 로직):', result.error);
+             alert(`분석에 실패했습니다: ${result.error}`);
         }
     } catch (error) {
-        console.error('분석 오류:', error);
+        console.error('❌ 분석 API 호출 오류:', error);
+        // ⬇️ [추가] 사용자에게 오류 알림
+        alert(`분석 중 오류가 발생했습니다.\n${error.message}\n\n레이어 선택을 해제하거나 다시 시도해주세요.`);
+        
+        // ⬇️ [추가] 오류 발생 시 상세결과 창에 오류 메시지 표시
+        const detailsContent = document.getElementById('detailsContent');
+        detailsContent.innerHTML = `
+            <h3>📋 상세결과</h3>
+            <div class="empty-result" style="color: #d32f2f; text-align: left;">
+                <strong>분석 오류 발생</strong><br>
+                - ${error.message}<br>
+                - (콘솔 창에서 'analyze' 오류를 확인하세요)
+            </div>
+        `;
+        showRightPanelTab('details', true);
     }
 }
+// =================================================================
+// ⬆️ [수정] analyzeLocation 종료 ⬆️
+// =================================================================
 
 async function displayAnalysisResult(data, address, lat, lng, detectedRegion) {
     const detailsContent = document.getElementById('detailsContent');
@@ -1238,6 +1286,11 @@ async function handleChatSend() {
     try {
         let endpoint = '';
         let payload = {};
+        
+        // ⬇️ [추가] 분석 데이터가 없을 경우 (분석 실패 시) 채팅 중단
+        if (!currentAnalysisData || !currentAddressInfo) {
+             throw new Error("분석 데이터가 없습니다. 먼저 지번 검색 및 분석을 완료해야 합니다.");
+        }
 
         if (chatHistory.length === 1) { 
             // 1. 최초 분석 요청
@@ -1282,19 +1335,22 @@ async function handleChatSend() {
             
             chatHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
         } else {
-            const errorMsg = `오류가 발생했습니다: ${result.error || '응답을 가져오지 못했습니다.'}`;
+            // ⬇️ [수정] result.response (서버에서 보낸 안내 메시지) 또는 result.error 사용
+            const errorMsg = `오류가 발생했습니다: ${result.response || result.error || '응답을 가져오지 못했습니다.'}`;
             loadingDiv.innerHTML = formatAiResponse(errorMsg);
             loadingDiv.id = '';
             
+            // ⬇️ [수정] AI의 오류 응답도 history에 추가
             chatHistory.push({ role: 'model', parts: [{ text: errorMsg }] });
         }
 
     } catch (error) {
         console.error('Gemini 채팅 오류:', error);
-        const errorMsg = '채팅 서버 연결에 실패했습니다.';
+        const errorMsg = `채팅 서버 연결에 실패했습니다: ${error.message}`;
         loadingDiv.innerHTML = formatAiResponse(errorMsg);
         loadingDiv.id = '';
         
+        // ⬇️ [수정] CATCH에서 발생한 오류도 history에 추가
         chatHistory.push({ role: 'model', parts: [{ text: errorMsg }] });
     }
 
@@ -1339,4 +1395,3 @@ function showRightPanelTab(tabName, forceOpen = false) {
 }
 
 window.onload = initMap;
-
