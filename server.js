@@ -353,7 +353,7 @@ app.post('/api/search/address', async (req, res) => {
                     srsname: 'EPSG:4326',
                     output: 'application/json', key: VWORLD_API_KEY, 
                     // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-                    // domain: 'http://localhost:3000'
+                    domain: process.env.VWORLD_DOMAIN
                 };
                 
                 const wfsResponse = await axios.get(wfsUrl, { params: wfsParams, timeout: 10000 });
@@ -383,7 +383,7 @@ app.post('/api/search/address', async (req, res) => {
                 srsname: 'EPSG:4326',
                 output: 'application/json', key: VWORLD_API_KEY, 
                 // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-                // domain: 'http://localhost:3000'
+                domain: process.env.VWORLD_DOMAIN
             };
 
             try {
@@ -508,7 +508,7 @@ app.get('/api/parcel', async (req, res) => {
                     srsname: 'EPSG:4326',
                     output: 'application/json', key: VWORLD_API_KEY, 
                     // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-                    // domain: 'http://localhost:3000'
+                    domain: process.env.VWORLD_DOMAIN
                 };
 
                 const response = await axios.get(wfsUrl, { params: wfsParams, timeout: 10000 });
@@ -538,7 +538,7 @@ app.get('/api/parcel', async (req, res) => {
             srsname: 'EPSG:4326',
             output: 'application/json', key: VWORLD_API_KEY, 
             // === [수정] Vercel 배포 시 domain 파라미터 불필요 ===
-            // domain: 'http://localhost:3000'
+            domain: process.env.VWORLD_DOMAIN
         };
 
         const response = await axios.get(wfsUrl_fallback, { params: params_fallback, timeout: 10000 });
